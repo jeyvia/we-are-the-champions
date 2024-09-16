@@ -2,6 +2,7 @@ function ParseInput(input) {
     const lines = input.split('\n');
     const teams = [];
     const results = [];
+    let maxGroupNumber = 0;
     let index = 1;
     let matchResultsFound = false;
     if (lines[0].toLowerCase().includes('team information:')) {
@@ -19,6 +20,9 @@ function ParseInput(input) {
                             registrationDate: args[1],
                             groupNumber: parseInt(args[2])
                         });
+                        if (parseInt(args[2]) > maxGroupNumber) {
+                            maxGroupNumber = parseInt(args[2]);
+                        }
                     }
                 }
             }
@@ -36,13 +40,20 @@ function ParseInput(input) {
             }
         }
         return {
-            type: "teamInfoResults",
-            teams: teams,
-            results: results
+            Type: "TeamInfoResults",
+            Teams: teams,
+            Results: results,
+            NumOfGroups: maxGroupNumber
         };
     } else if (lines[0].toLowerCase().includes('/')) {
-        
+
     }
 }
 
-module.exports = ParseInput;
+function ParseDateString(dateStr) {
+    const [day, month] = dateStr.split('/').map(Number);
+    const year = new Date().getFullYear(); 
+    return new Date(year, month - 1, day);
+}
+
+module.exports = { ParseInput, ParseDateString };

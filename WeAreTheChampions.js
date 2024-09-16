@@ -1,4 +1,5 @@
-const ParseInput = require('./InputOperations/Parser');
+const { ParseInput } = require('./InputOperations/Parser');
+const Command = require('./Commands/Command');
 const readline = require('readline');
 
 const rl = readline.createInterface({
@@ -12,8 +13,8 @@ let inputBuffer = '';
 rl.on('line', (line) => {
     if (line.trim().toLowerCase() === 'end') {
         if (inputBuffer.trim()) { 
-            let FullInput = ParseInput(inputBuffer);
-            
+            const FullInput = ParseInput(inputBuffer);
+            Command(FullInput);
             inputBuffer = ''; 
         }
         console.log('Ready for more input...');
