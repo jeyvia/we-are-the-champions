@@ -46,7 +46,19 @@ function ParseInput(input) {
             NumOfGroups: maxGroupNumber
         };
     } else if (lines[0].toLowerCase().includes('/')) {
-
+        if (lines[0].toLowerCase().includes('/print')) {
+            const args = lines[0].split(' ');
+            if (args.length === 2) {
+                return {
+                    Type: "TeamDetails",
+                    TeamName: args[1]
+                };
+            } else {
+                return {
+                    Type: "PrintTable"
+                };
+            }
+        } 
     }
 }
 

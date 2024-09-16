@@ -1,4 +1,4 @@
-const { FormTable, UpdateTable, PrintTable } = require('./TableOperations');
+const { FormTable, UpdateTable, PrintTable, PrintTeam } = require('./TableOperations');
 
 function Command(ParsedInput) {
     const CommandType = ParsedInput.Type;
@@ -12,7 +12,7 @@ function Command(ParsedInput) {
             PrintTable();
             break;
         case 'TeamDetails':
-
+            PrintTeam(ParsedInput.TeamName);
             break;
         case 'Edit':
 
