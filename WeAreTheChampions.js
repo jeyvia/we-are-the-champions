@@ -1,19 +1,25 @@
+const ParseInput = require('./InputOperations/Parser');
 const readline = require('readline');
 
 const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
+    terminal: false
 });
 
-function getInput() {
-    rl.question('Enter some input (or "exit" to quit): ', (input) => {
-        if (input === 'exit') {
-            rl.close();
-        } else {
-            console.log('You entered:', input);
-            getInput();
-        }
-    });
-}
+let inputBuffer = ''; 
 
-getInput();
+rl.on('line', (line) => {
+    if (line.trim().toLowerCase() === 'end') {
+        if (inputBuffer.trim()) { 
+            let FullInput = ParseInput(inputBuffer);
+            
+            inputBuffer = ''; 
+        }
+        console.log('Ready for more input...');
+    } else {
+        inputBuffer += line + '\n'; 
+    }
+});
+
+console.log('Please enter Team Information and Match Results (or "exit" to quit):');
