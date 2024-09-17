@@ -21,20 +21,37 @@ class TableManager {
     }
 
     getTeam(TeamName) {
-        return this.table.find(team => team.TeamName === TeamName);
+        return this.table.find(team => team.TeamName.toLowerCase() === TeamName.toLowerCase());
     }
 
     getTable(groupNumber) {
-        return this.table.filter(team => team.GroupNumber === groupNumber);
+        const Table = this.table.filter(team => team.GroupNumber === groupNumber);
+        return Table.sort((a, b) => {
+            if (a.Points === b.Points) {
+                if (a.GoalsScored === b.GoalsScored) {
+                    const aAlternatePoints = a.Wins * 5 + a.Draws * 3 + a.Losses;
+                    const bAlternatePoints = b.Wins * 5 + b.Draws * 3 + b.Losses;
+                    if (aAlternatePoints === bAlternatePoints) {
+                        return ParseDateString(a.registrationDate) - ParseDateString(b.registrationDate);
+                    } else {
+                        return bAlternatePoints - aAlternatePoints;
+                    }
+                } else {
+                    return b.GoalsScored - a.GoalsScored;
+                }
+            } else {
+                return b.Points - a.Points;
+            }
+        });
     }
 
-    updateTeamResults(TeamName, updatedInfo) {
-        const index = this.table.findIndex(team => team.TeamName === TeamName);
-        if (index !== -1) {
-            this.table[index] = { ...this.table[index], ...updatedInfo };
-        } else {
-            throw new Error('Team not found');
-        }
+    getMatch(Team, OpponentName) {
+        return Team.MatchHistory.findIndex(match => match.Opponent === OpponentName);
+    }
+
+    DeleteTable() {
+        this.table = [];
+        this.NumOfGroups = 0;
     }
 }
 
