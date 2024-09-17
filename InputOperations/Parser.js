@@ -11,7 +11,6 @@ function ParseInput(input) {
             if (line !== undefined) {
                 if (lines[index].toLowerCase().includes("match results:")) {
                     matchResultsFound = true;
-                    index++;
                 } else {
                     const args = line.split(' ');
                     if (args.length === 3) {
@@ -40,7 +39,7 @@ function ParseInput(input) {
             }
         }
         return {
-            Type: "TeamInfoResults",
+            Type: "FormTable",
             Teams: teams,
             Results: results,
             NumOfGroups: maxGroupNumber
@@ -51,7 +50,7 @@ function ParseInput(input) {
             const args = lines[0].split(' ');
             if (args.length === 2) {
                 return {
-                    Type: "TeamDetails",
+                    Type: "PrintTeam",
                     TeamName: args[1]
                 };
             } else {
@@ -86,29 +85,23 @@ function ParseInput(input) {
                 Results: results,
                 NumOfGroups: maxGroupNumber
             };
-        } else if (command.toLowerCase().includes('/clear')) {
+        } else if (command.toLowerCase().includes('/delete')) {
             return {
                 Type: "Delete"
+            };
+        } else if (command.toLowerCase().includes('/exit')) {
+            return {
+                Type: "Exit"
             };
         } else {
             return {
                 Type: "Invalid"
             };
         }
-    } else if (lines[0].toLowerCase().includes('exit')) {
-        return {
-            Type: "Exit"
-        };
     }
     return {
         Type: "Invalid"
     };
 }
 
-function ParseDateString(dateStr) {
-    const [day, month] = dateStr.split('/').map(Number);
-    const year = new Date().getFullYear(); 
-    return new Date(year, month - 1, day);
-}
-
-module.exports = { ParseInput, ParseDateString };
+module.exports = { ParseInput };

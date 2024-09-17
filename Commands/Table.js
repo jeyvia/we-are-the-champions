@@ -24,6 +24,13 @@ class TableManager {
         return this.table.find(team => team.TeamName.toLowerCase() === TeamName.toLowerCase());
     }
 
+
+    ParseDateString(dateStr) {
+        const [day, month] = dateStr.split('/').map(Number);
+        const year = new Date().getFullYear();
+        return new Date(year, month - 1, day);
+    }
+
     getTable(groupNumber) {
         const Table = this.table.filter(team => team.GroupNumber === groupNumber);
         return Table.sort((a, b) => {
@@ -46,7 +53,7 @@ class TableManager {
     }
 
     getMatch(Team, OpponentName) {
-        return Team.MatchHistory.findIndex(match => match.Opponent === OpponentName);
+        return Team.MatchHistory.findIndex(match => match.Opponent.toLowerCase() === OpponentName.toLowerCase());
     }
 
     DeleteTable() {

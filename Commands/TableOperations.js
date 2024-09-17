@@ -1,5 +1,4 @@
 const TableManager = require('./Table');
-const ParseDateString = require('../InputOperations/Parser');
 
 function FormTable(Teams, NumOfGroups) {
     for (let i = 0; i < Teams.length; i++) {
@@ -107,12 +106,22 @@ function PrintTeam(TeamName) {
 }
 
 function UpdateTable(Teams, Results, NumOfGroups) {
+    const BeforeData = {
+        Teams: [],
+        Results: []
+    }
     for (let i = 0; i < Teams.length; i++) {
         const CurrentTeam = TableManager.getTeam(Teams[i].teamName);
         if (CurrentTeam) {
+            BeforeData.Teams.push(
+                {
+                    TeamName: CurrentTeam.TeamName,
+                    RegistrationDate: CurrentTeam.RegistrationDate,
+                    GroupNumber: CurrentTeam.GroupNumber
+                }
+            );
             CurrentTeam.RegistrationDate = Teams[i].registrationDate;
             CurrentTeam.GroupNumber = Teams[i].groupNumber;
-            TableManager.updateTeamResults(Teams[i].teamName, CurrentTeam);
         } else {
             TableManager.addTeam({
                 TeamName: Teams[i].teamName,
@@ -132,7 +141,16 @@ function UpdateTable(Teams, Results, NumOfGroups) {
         const CurrentTeam = TableManager.getTeam(Results[i].team1);
         if (CurrentTeam) {
             const matchIndex = TableManager.getMatch(CurrentTeam, Results[i].team2);
+            const OpponentTeam = TableManager.getTeam(Results[i].team2);
+            const CurrentTeamBefore = JSON.parse(JSON.stringify(CurrentTeam)); 
+            const OpponentTeamBefore = JSON.parse(JSON.stringify(OpponentTeam)); 
             if (matchIndex !== -1) {
+                BeforeData.Results.push({
+                    Team: CurrentTeamBefore, 
+                    OpponentTeam: OpponentTeamBefore, 
+                    TeamScore: CurrentTeamBefore.MatchHistory[matchIndex].TeamScore, 
+                    OpponentScore: CurrentTeamBefore.MatchHistory[matchIndex].OpponentScore,
+                });
                 const OpponentTeam = TableManager.getTeam(CurrentTeam.MatchHistory[matchIndex].Opponent);
                 if (CurrentTeam.MatchHistory[matchIndex].TeamScore > CurrentTeam.MatchHistory[matchIndex].OpponentScore) {
                     CurrentTeam.Wins--;
@@ -153,7 +171,7 @@ function UpdateTable(Teams, Results, NumOfGroups) {
                 CurrentTeam.GoalsScored -= CurrentTeam.MatchHistory[matchIndex].TeamScore;
                 OpponentTeam.GoalsScored -= CurrentTeam.MatchHistory[matchIndex].OpponentScore;
                 CurrentTeam.MatchHistory.splice(matchIndex, 1);
-            } 
+            }
         }
     }
     UpdateResults(Results);
@@ -162,6 +180,7 @@ function UpdateTable(Teams, Results, NumOfGroups) {
         TableManager.assignNumOfGroups(NumOfGroups);
     }
     console.log('Table has been updated with new data');
+    return BeforeData;
 }
 
 function DeleteTable() {
@@ -169,4 +188,4 @@ function DeleteTable() {
     console.log('Previously entered data has been cleared');
 }
 
-module.exports = { FormTable, UpdateResults, PrintTable, PrintTeam, UpdateTable, DeleteTable };
+module.exports = { FormTable, UpdateResults, UpdateRanks, PrintTable, PrintTeam, UpdateTable, DeleteTable };

@@ -12,12 +12,15 @@ let inputBuffer = '';
 
 rl.on('line', (line) => {
     if (line.trim().toLowerCase() === 'end') {
-        if (inputBuffer.trim()) { 
+        if (inputBuffer.trim()) {
             const FullInput = ParseInput(inputBuffer);
-            Command(FullInput);
-            inputBuffer = ''; 
+            Command(FullInput, inputBuffer, () => {
+                console.log('Ready for more input...');
+                inputBuffer = ''; 
+            });
+        } else {
+            console.log('Ready for more input...');
         }
-        console.log('Ready for more input...');
     } else {
         inputBuffer += line + '\n'; 
     }
@@ -43,4 +46,4 @@ console.log(`
 ⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠓⠲⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠖⠃⠀⠀⠀⠀⠀⠀
     `);
-console.log('Please enter Team Information and Match Results (or "exit" to quit):');
+console.log('Please enter Team Information and Match Results (or "/exit" to quit):');
