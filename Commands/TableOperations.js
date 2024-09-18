@@ -79,12 +79,8 @@ function PrintTable() {
         TableWithRanks.forEach(row => {
             console.log(columns.map((col, i) => row[col].toString().padEnd(columnWidths[i])).join(' | '));
         });
-        console.log(
-            'Teams that have qualified for the next round:', 
-            TableWithRanks[0].TeamName, ",",
-            TableWithRanks[1].TeamName, ",",
-            TableWithRanks[2].TeamName, ",",
-            TableWithRanks[3].TeamName);
+        const qualifiedTeams = TableWithRanks.slice(0, 4).map(team => team.TeamName);
+        console.log('Teams that have qualified for the next round:', qualifiedTeams.join(", "));
     }
 }
 

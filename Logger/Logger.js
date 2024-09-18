@@ -30,7 +30,7 @@ function getDateTime() {
 
 function logsToFile(message, callback) {
     const timestamp = getDateTime();
-    const logMessage = `${timestamp} - ${message}\n`;
+    const logMessage = '-'.repeat(150) + '\n' + `${timestamp} - ${message}\n`;
 
     fs.appendFile(LOGS_FILEPATH, logMessage, (err) => {
         if (err) {
@@ -38,7 +38,7 @@ function logsToFile(message, callback) {
         } else {
             console.log('Log written to file');
         }
-        if (callback) callback(); // Invoke callback if provided
+        if (callback) callback(); 
     });
 }
 

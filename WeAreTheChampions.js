@@ -9,9 +9,10 @@ const rl = readline.createInterface({
 });
 
 let inputBuffer = ''; 
+const END_COMMAND = "end";
 
 rl.on('line', (line) => {
-    if (line.trim().toLowerCase() === 'end') {
+    if (line.trim().toLowerCase() === END_COMMAND) {
         if (inputBuffer.trim()) {
             const FullInput = ParseInput(inputBuffer);
             Command(FullInput, inputBuffer, () => {

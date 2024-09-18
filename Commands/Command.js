@@ -1,10 +1,19 @@
 const { FormTable, UpdateResults, PrintTable, PrintTeam, UpdateTable, DeleteTable } = require('./TableOperations');
 const Logger = require('../Logger/Logger');
 
+const TYPES = {
+    FormTable: "FormTable",
+    PrintTeam: "PrintTeam",
+    PrintTable: "PrintTable",
+    Edit: "Edit",
+    Delete: "Delete",
+    Exit: "Exit",
+}
+
 function Command(ParsedInput, inputBuffer, callback) {
     const CommandType = ParsedInput.Type;
     switch (CommandType) {
-        case 'FormTable':
+        case TYPES.FormTable:
             FormTable(ParsedInput.Teams, ParsedInput.NumOfGroups);
             UpdateResults(ParsedInput.Results);
             PrintTable();
@@ -13,14 +22,14 @@ function Command(ParsedInput, inputBuffer, callback) {
                 InputBuffer: inputBuffer
             }, callback);
             break;
-        case 'PrintTable':
+        case TYPES.PrintTable:
             PrintTable();
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer
             }, callback);
             break;
-        case 'PrintTeam':
+        case TYPES.PrintTeam:
             PrintTeam(ParsedInput.TeamName);
             Logger({
                 Type: CommandType,
@@ -28,7 +37,7 @@ function Command(ParsedInput, inputBuffer, callback) {
                 TeamName: ParsedInput.TeamName
             }, callback);
             break;
-        case 'Edit':
+        case TYPES.Edit:
             const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results, ParsedInput.NumOfGroups);
             Logger({
                 Type: CommandType,
@@ -36,14 +45,14 @@ function Command(ParsedInput, inputBuffer, callback) {
                 BeforeData: BeforeData
             }, callback);
             break;
-        case 'Delete':
+        case TYPES.Delete:
             DeleteTable();
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer
             }, callback);
             break;
-        case 'Exit':
+        case TYPES.Exit:
             console.log('Exiting WeAreTheChampions... Goodbye!');
             Logger({
                 Type: CommandType,
