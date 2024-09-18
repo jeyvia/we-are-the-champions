@@ -1,4 +1,4 @@
-const { ValidateTeamInformationInput, ValidateMatchResultsInput, ValidatePrintInput, ValidateEditInput } = require('./InputValidation');
+const { ValidateTeamInformationInput, ValidateMatchResultsInput, ValidatePrintInput, ValidateEditInput, ValidateDeleteInput, ValidateExitInput, ValidateHelpInput } = require('./InputValidation');
 
 const TYPES = {
     FormTable: "FormTable",
@@ -7,6 +7,7 @@ const TYPES = {
     Edit: "Edit",
     Delete: "Delete",
     Exit: "Exit",
+    Help: "Help",
     Invalid: "Invalid",
 }
 
@@ -16,7 +17,8 @@ const COMMANDS = {
     Print: "/print",
     Edit: "/edit",
     Delete: "/delete",
-    Exit: "/exit"
+    Exit: "/exit",
+    Help: "/help"
 }
 
 function ParseInput(input) {
@@ -44,12 +46,12 @@ function ParseInput(input) {
                             maxGroupNumber = parseInt(args[2]);
                         }
                     } catch (error) {
-                        console.log("Error:", error.message);
+                        
                     }
                 }
             }
         }
-        for (; index < lines.length-1; index++) {
+        for (; index < lines.length - 1; index++) {
             try {
                 const line = lines[index];
                 const args = ValidateMatchResultsInput(line);
@@ -60,7 +62,7 @@ function ParseInput(input) {
                     team2Score: parseInt(args[3])
                 });
             } catch (error) {
-                console.log("Error:", error.message);
+                
             }
         }
         return {
@@ -85,13 +87,13 @@ function ParseInput(input) {
                     };
                 }
             } catch (error) {
-                console.log("Error:", error.message);
+                console.error("Error:", error.message);
                 return {
                     Type: TYPES.Invalid
                 };
             }
         } else if (command.toLowerCase() === (COMMANDS.Edit)) {
-            for (let i = 1; i < lines.length-1; i++) {
+            for (let i = 1; i < lines.length - 1; i++) {
                 try {
                     const args = ValidateEditInput(lines[i]);
                     if (args.length === 4) {
@@ -112,7 +114,7 @@ function ParseInput(input) {
                         }
                     }
                 } catch (error) {
-                    console.log("Error:", error.message);
+                    
                 }
             }
             return {
@@ -122,13 +124,41 @@ function ParseInput(input) {
                 NumOfGroups: maxGroupNumber
             };
         } else if (command.toLowerCase() === COMMANDS.Delete) {
-            return {
-                Type: TYPES.Delete
-            };
+            try {
+                ValidateDeleteInput(lines[0]);
+                return {
+                    Type: TYPES.Delete
+                };
+            } catch (error) {
+                console.error("Error:", error.message);
+                return {
+                    Type: TYPES.Invalid
+                };
+            }
         } else if (command.toLowerCase() === COMMANDS.Exit) {
-            return {
-                Type: TYPES.Exit
-            };
+            try {
+                ValidateExitInput(lines[0]);
+                return {
+                    Type: TYPES.Exit
+                };
+            } catch (error) {
+                console.error("Error:", error.message);
+                return {
+                    Type: TYPES.Invalid
+                };
+            }
+        } else if (command.toLowerCase() === COMMANDS.Help) {
+            try {
+                ValidateHelpInput(lines[0]);
+                return {
+                    Type: TYPES.Help
+                };
+            } catch (error) {
+                console.error("Error:", error.message);
+                return {
+                    Type: TYPES.Invalid
+                };
+            }
         } else {
             return {
                 Type: TYPES.Invalid

@@ -8,7 +8,28 @@ const TYPES = {
     Edit: "Edit",
     Delete: "Delete",
     Exit: "Exit",
+    Help: "Help",
 }
+
+const FullHelpMessageOutput =
+    "Commands:\n" + 
+    "---- To add team(s) to the table: ----\n" +
+    "Team Information:\nTeamX MM/DD GroupNumber\nEND\n\n" +
+    "---- To add match results: ----\n" +
+    "Match Results:\nTeamX TeamY TeamXScore TeamYScore\nEND\n\n" +
+    "---- To print the full table by groups: ----\n" +
+    "/Print\nEND\n\n" +
+    "---- To print a specific team's information: ----\n" +
+    "/Print TeamX\nEND\n\n" +
+    "---- To edit a specific team's information: ----\n" +
+    "/Edit\nTeamX MM/DD GroupNumber\nEND\n\n" + 
+    "---- To edit a specific match result: ----\n" +
+    "/Edit\nTeamX TeamY TeamXScore TeamYScore\nEND\n\n" +
+    "---- To clear all previously entered data: ----\n" +
+    "/Delete\nEND\n\n" +
+    "---- To exit the program: ----\n" +
+    "/Exit\nEND\n";
+
 
 function Command(ParsedInput, inputBuffer, callback) {
     const CommandType = ParsedInput.Type;
@@ -60,6 +81,13 @@ function Command(ParsedInput, inputBuffer, callback) {
             }, () => {
                 process.exit();
             });
+            break;
+        case TYPES.Help:
+            console.log(FullHelpMessageOutput);
+            Logger({
+                Type: CommandType,
+                InputBuffer: inputBuffer
+            }, callback);
             break;
         default:
             console.log('Invalid Command Entered');

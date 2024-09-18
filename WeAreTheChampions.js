@@ -8,22 +8,20 @@ const rl = readline.createInterface({
     terminal: false
 });
 
-let inputBuffer = ''; 
+let inputBuffer = '';
 const END_COMMAND = "end";
 
 rl.on('line', (line) => {
     if (line.trim().toLowerCase() === END_COMMAND) {
-        if (inputBuffer.trim()) {
-            const FullInput = ParseInput(inputBuffer);
-            Command(FullInput, inputBuffer, () => {
-                console.log('Ready for more input...');
-                inputBuffer = ''; 
-            });
-        } else {
+        console.log('');
+        const FullInput = ParseInput(inputBuffer);
+        Command(FullInput, inputBuffer, () => {
+            console.log('-'.repeat(150));
             console.log('Ready for more input...');
-        }
+            inputBuffer = '';
+        });
     } else {
-        inputBuffer += line + '\n'; 
+        inputBuffer += line + '\n';
     }
 });
 
@@ -47,4 +45,5 @@ console.log(`
 ⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠓⠲⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠖⠃⠀⠀⠀⠀⠀⠀
     `);
-console.log('Please enter Team Information and Match Results (or "/exit" to quit):');
+console.log('You can enter /help, followed by END (in a new line) for a list of commands');
+console.log('Please enter Team Information and Match Results:');

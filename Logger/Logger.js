@@ -10,6 +10,7 @@ const PRINTTEAM_MESSAGE = 'WeAreTheChampions has printed the team:\n';
 const EDITTABLE_MESSAGE = 'WeAreTheChampions has edited the table with the following changes:\n';
 const DELETETABLE_MESSAGE = 'WeAreTheChampions has deleted the table\n';
 const EXIT_MESSAGE = 'WeAreTheChampions has initiated exit based on User Input\n';
+const HELP_MESSAGE = 'WeAreTheChampions has printed the help message\n';
 const INVALIDCOMMAND_MESSAGE = 'WeAreTheChampions did not recognise the command entered\nWeAreTheChampions classified User Input as invalid\n';
 
 function getDateTime() {
@@ -36,7 +37,7 @@ function logsToFile(message, callback) {
         if (err) {
             console.error('Error writing to file', err);
         } else {
-            console.log('Log written to file');
+            console.log('\nLog written to file');
         }
         if (callback) callback(); 
     });
@@ -168,6 +169,11 @@ function Logger(CommandsInfo, callback) {
             message += inputBuffer;
             message += '\n';
             message += EXIT_MESSAGE;
+            break;
+        case 'Help':
+            message += inputBuffer;
+            message += '\n';
+            message += HELP_MESSAGE;
             break;
         default:
             message += inputBuffer;
