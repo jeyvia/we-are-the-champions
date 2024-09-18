@@ -1,5 +1,6 @@
 const { ParseInput } = require('./InputOperations/Parser');
 const Command = require('./Commands/Command');
+const { LoadAndVerifyJson } = require('./Data/LocalStorage');
 const readline = require('readline');
 
 const rl = readline.createInterface({
@@ -45,5 +46,10 @@ console.log(`
 ⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠓⠲⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠖⠃⠀⠀⠀⠀⠀⠀
     `);
+try {
+    LoadAndVerifyJson();
+} catch (error) {
+    console.error(error.message + " No save data loaded");
+}
 console.log('You can enter /help, followed by END (in a new line) for a list of commands');
-console.log('Please enter Team Information and Match Results:');
+console.log('Ready for more input...');

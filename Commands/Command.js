@@ -1,5 +1,6 @@
 const { FormTable, UpdateResults, PrintTable, PrintTeam, UpdateTable, DeleteTable } = require('./TableOperations');
 const Logger = require('../Logger/Logger');
+const { SaveJsonWithHash } = require('../Data/LocalStorage');
 
 const TYPES = {
     FormTable: "FormTable",
@@ -38,6 +39,7 @@ function Command(ParsedInput, inputBuffer, callback) {
             FormTable(ParsedInput.Teams, ParsedInput.NumOfGroups);
             UpdateResults(ParsedInput.Results);
             PrintTable();
+            SaveJsonWithHash();
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer
@@ -60,6 +62,7 @@ function Command(ParsedInput, inputBuffer, callback) {
             break;
         case TYPES.Edit:
             const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results, ParsedInput.NumOfGroups);
+            SaveJsonWithHash();
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer,
@@ -68,6 +71,7 @@ function Command(ParsedInput, inputBuffer, callback) {
             break;
         case TYPES.Delete:
             DeleteTable();
+            SaveJsonWithHash();
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer

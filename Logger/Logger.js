@@ -35,9 +35,9 @@ function logsToFile(message, callback) {
 
     fs.appendFile(LOGS_FILEPATH, logMessage, (err) => {
         if (err) {
-            console.error('Error writing to file', err);
+            console.error('Error writing to log file:', err);
         } else {
-            console.log('\nLog written to file');
+            console.log('');
         }
         if (callback) callback(); 
     });
@@ -183,7 +183,5 @@ function Logger(CommandsInfo, callback) {
     }
     logsToFile(message, callback);
 }
-
-
 
 module.exports = Logger;

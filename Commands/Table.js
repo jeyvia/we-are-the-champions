@@ -24,7 +24,6 @@ class TableManager {
         return this.table.find(team => team.TeamName.toLowerCase() === TeamName.toLowerCase());
     }
 
-
     ParseDateString(dateStr) {
         const [day, month] = dateStr.split('/').map(Number);
         const year = new Date().getFullYear();
@@ -54,6 +53,14 @@ class TableManager {
 
     getMatch(Team, OpponentName) {
         return Team.MatchHistory.findIndex(match => match.Opponent.toLowerCase() === OpponentName.toLowerCase());
+    }
+
+    getRawTable() {
+        return this.table;
+    }
+
+    setRawTable(newTable) {
+        this.table = newTable;
     }
 
     DeleteTable() {

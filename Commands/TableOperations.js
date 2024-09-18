@@ -2,18 +2,22 @@ const TableManager = require('./Table');
 
 function FormTable(Teams, NumOfGroups) {
     for (let i = 0; i < Teams.length; i++) {
-        TableManager.addTeam({
-            TeamName: Teams[i].teamName,
-            MatchesPlayed: 0,
-            Wins: 0,
-            Draws: 0,
-            Losses: 0,
-            Points: 0,
-            GoalsScored: 0,
-            RegistrationDate: Teams[i].registrationDate,
-            GroupNumber: Teams[i].groupNumber,
-            MatchHistory: []
-        });
+        if (TableManager.getTeam(Teams[i].teamName)) {
+            console.log(`Team with name ${Teams[i].teamName} already exists`);
+        } else {
+            TableManager.addTeam({
+                TeamName: Teams[i].teamName,
+                MatchesPlayed: 0,
+                Wins: 0,
+                Draws: 0,
+                Losses: 0,
+                Points: 0,
+                GoalsScored: 0,
+                RegistrationDate: Teams[i].registrationDate,
+                GroupNumber: Teams[i].groupNumber,
+                MatchHistory: []
+            });
+        }
     }
     TableManager.assignNumOfGroups(NumOfGroups);
 }
@@ -95,7 +99,7 @@ function PrintTeam(TeamName) {
     console.log(`\x1b[1mGoals Scored:\x1b[0m ${TeamData.GoalsScored}`);
     console.log(`\x1b[1mRegistration Date:\x1b[0m ${TeamData.RegistrationDate}`);
     console.log(`\x1b[1mGroup Number:\x1b[0m ${TeamData.GroupNumber}`);
-    console.log(`\x1b[1mMatch History:\x1b[0m`);    
+    console.log(`\x1b[1mMatch History:\x1b[0m`);
     for (let i = 0; i < TeamData.MatchHistory.length; i++) {
         console.log(`${TeamData.MatchHistory[i].Opponent}: ${TeamData.MatchHistory[i].TeamScore}-${TeamData.MatchHistory[i].OpponentScore}`);
     }
@@ -138,13 +142,13 @@ function UpdateTable(Teams, Results, NumOfGroups) {
         if (CurrentTeam) {
             const matchIndex = TableManager.getMatch(CurrentTeam, Results[i].team2);
             const OpponentTeam = TableManager.getTeam(Results[i].team2);
-            const CurrentTeamBefore = JSON.parse(JSON.stringify(CurrentTeam)); 
-            const OpponentTeamBefore = JSON.parse(JSON.stringify(OpponentTeam)); 
+            const CurrentTeamBefore = JSON.parse(JSON.stringify(CurrentTeam));
+            const OpponentTeamBefore = JSON.parse(JSON.stringify(OpponentTeam));
             if (matchIndex !== -1) {
                 BeforeData.Results.push({
-                    Team: CurrentTeamBefore, 
-                    OpponentTeam: OpponentTeamBefore, 
-                    TeamScore: CurrentTeamBefore.MatchHistory[matchIndex].TeamScore, 
+                    Team: CurrentTeamBefore,
+                    OpponentTeam: OpponentTeamBefore,
+                    TeamScore: CurrentTeamBefore.MatchHistory[matchIndex].TeamScore,
                     OpponentScore: CurrentTeamBefore.MatchHistory[matchIndex].OpponentScore,
                 });
                 const OpponentTeam = TableManager.getTeam(CurrentTeam.MatchHistory[matchIndex].Opponent);
