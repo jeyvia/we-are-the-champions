@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const fs = require('fs');
 const TableManager = require('../Commands/Table');
 
-const FILENAME = "./Data/data.json";
 const NO_FILE_MESSAGE = 'No data file found.';
 const EMPTY_FILE_MESSAGE = 'The data file is empty.';
 const INVALID_JSON_FORMAT_MESSAGE = 'Invalid JSON format.';
@@ -14,14 +13,16 @@ function CalculateHash(data) {
     return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
 }
 
-function SaveJsonWithHash() {
+function SaveJsonWithHash(user) {
+    const FILENAME = `./Data/data-${user}.json`;
     const data = { rawTable: TableManager.getRawTable(), numOfGroups: TableManager.getNumOfGroups() };
     const hash = CalculateHash(data);
     const dataWithHash = { data, hash };
     fs.writeFileSync(FILENAME, JSON.stringify(dataWithHash, null, 2));
 }
 
-function LoadAndVerifyJson() {
+function LoadAndVerifyJson(user) {
+    const FILENAME = `./Data/data-${user}.json`;
     if (fs.existsSync(FILENAME)) {
         const FileContent = fs.readFileSync(FILENAME, 'utf-8');
         if (FileContent) {
@@ -31,7 +32,7 @@ function LoadAndVerifyJson() {
             } catch (error) {
                 throw new Error(INVALID_JSON_FORMAT_MESSAGE);
             }
-            if (!ParsedContent.data || Array.isArray(ParsedContent.data.rawTable) || ParsedContent.data.numOfGroups === 0 || !ParsedContent.hash) {
+            if (!ParsedContent.data || !Array.isArray(ParsedContent.data.rawTable) || ParsedContent.data.numOfGroups === 0 || !ParsedContent.hash) {
                 throw new Error(MISSING_FIELDS_MESSAGE);
             }
 

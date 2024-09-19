@@ -1,9 +1,7 @@
 const fs = require('fs');
 const TableManager = require('../Commands/Table');
 const { UpdateRanks } = require('../Commands/TableOperations');
-const LOGS_FILEPATH = './Logger/logs.txt';
 
-const USER_INPUT_MESSAGE = 'User entered the following input:\n';
 const FORMTABLE_MESSAGE = 'WeAreTheChampions has formed a table, with the corresponding match results:\n';
 const PRINTTABLE_MESSAGE = 'WeAreTheChampions has printed the table:\n';
 const PRINTTEAM_MESSAGE = 'WeAreTheChampions has printed the team:\n';
@@ -29,22 +27,26 @@ function getDateTime() {
     return gmt8Time.toLocaleString('en-US', options);
 }
 
-function logsToFile(message, callback) {
+function logsToFile(message, user, callback) {
     const timestamp = getDateTime();
     const logMessage = '-'.repeat(150) + '\n' + `${timestamp} - ${message}\n`;
-
+    const LOGS_FILEPATH = `./Logger/logs-${user}.txt`;
+    
     fs.appendFile(LOGS_FILEPATH, logMessage, (err) => {
         if (err) {
             console.error('Error writing to log file:', err);
         } else {
             console.log('');
         }
-        if (callback) callback(); 
+        if (callback) callback();
     });
 }
 
 function PrintTableForLogs() {
     const maxGroupNumber = TableManager.getNumOfGroups();
+    if (maxGroupNumber === 0) {
+        return 'No table data found';
+    }
     let returnMessage = '';
     for (let i = 1; i <= maxGroupNumber; i++) {
         returnMessage += `Group ${i}\n`;
@@ -128,7 +130,7 @@ function FormatLogsForEdit(BeforeData) {
 
 function Logger(CommandsInfo, callback) {
     const CommandType = CommandsInfo.Type;
-    let message = USER_INPUT_MESSAGE;
+    let message = `${CommandsInfo.User} entered the following input:\n`;
     const inputBuffer = CommandsInfo.InputBuffer;
     switch (CommandType) {
         case 'FormTable':
@@ -182,7 +184,7 @@ function Logger(CommandsInfo, callback) {
             message += INVALIDCOMMAND_MESSAGE;
             break;
     }
-    logsToFile(message, callback);
+    logsToFile(message, CommandsInfo.User, callback);
 }
 
 module.exports = Logger;
