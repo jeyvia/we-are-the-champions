@@ -102,7 +102,7 @@ function FormatLogsForEdit(BeforeData) {
     }
     for (let i = 0; i < BeforeData.Results.length; i++) {
         const ResultsBefore = BeforeData.Results[i];
-        const Team1Before = ResultsBefore.Team
+        const Team1Before = ResultsBefore.Team;
         const Team1 = Team1Before.TeamName;
         const Team2Before = ResultsBefore.OpponentTeam;
         const Team2 = Team2Before.TeamName;
@@ -145,13 +145,14 @@ function Logger(CommandsInfo, callback) {
             message += PRINTTABLE_MESSAGE;
             message += PrintTableForLogs();
             break;
-        case 'PrintTeam':
+        case 'PrintTeam': {
             message += inputBuffer;
             message += '\n';
             message += PRINTTEAM_MESSAGE;
             const TeamData = TableManager.getTeam(CommandsInfo.TeamName);
             message += PrintTeamforLogs(TeamData);
             break;
+        }
         case 'Edit':
             for (let i = 0; i < inputBuffer.length; i++) {
                 message += inputBuffer[i];

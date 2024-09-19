@@ -22,7 +22,7 @@ const VALID_HELP_SYNTAX_MESSAGE = "Help syntax:\n/Help";
 function ValidateTeamFormat(input) {
     if (input.length !== 5) {
         throw new Error(INVALID_TEAM_FORMAT_MESSAGE);
-    } 
+    }
     if (input.substring(0, 4).toLowerCase() !== "team") {
         throw new Error(INVALID_TEAM_FORMAT_MESSAGE);
     }
@@ -57,20 +57,17 @@ function ValidateScore(input) {
 }
 
 function ValidateTeamInformationInput(input) {
+
     if (input === null || input === undefined || input === '') {
         throw new Error(NULL_INPUT_MESSAGE);
     }
     const args = input.split(' ');
     if (args.length !== 3) {
-        throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_TEAM_INFORMATION_MESSAGE + VALID_TEAM_INFORMATION_SYNTAX_MESSAGE); 
+        throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_TEAM_INFORMATION_MESSAGE + VALID_TEAM_INFORMATION_SYNTAX_MESSAGE);
     }
-    try {
-        ValidateTeamFormat(args[0]);
-        ValidateDateFormat(args[1]);
-        ValidateGroupNumber(args[2]);
-    } catch (error) {
-        throw error;
-    }
+    ValidateTeamFormat(args[0]);
+    ValidateDateFormat(args[1]);
+    ValidateGroupNumber(args[2]);
     return args;
 }
 
@@ -82,14 +79,10 @@ function ValidateMatchResultsInput(input) {
     if (args.length !== 4) {
         throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_MATCH_RESULTS_MESSAGE + VALID_MATCH_RESULTS_SYNTAX_MESSAGE);
     }
-    try {
-        ValidateTeamFormat(args[0]);
-        ValidateTeamFormat(args[1]);
-        ValidateScore(args[2]);
-        ValidateScore(args[3]);
-    } catch (error) {
-        throw error;
-    }
+    ValidateTeamFormat(args[0]);
+    ValidateTeamFormat(args[1]);
+    ValidateScore(args[2]);
+    ValidateScore(args[3]);
     return args;
 }
 
@@ -99,12 +92,8 @@ function ValidatePrintInput(input) {
     }
     const args = input.split(' ');
     if (args.length === 2) {
-       try {
-            ValidateTeamFormat(args[1]);
-        } catch (error) {
-            throw error;
-       }
-       return args;
+        ValidateTeamFormat(args[1]);
+        return args;
     } else if (args.length === 1) {
         return args;
     } else {
@@ -118,23 +107,15 @@ function ValidateEditInput(input) {
     }
     const args = input.split(' ');
     if (args.length === 4) {
-        try {
-            ValidateTeamFormat(args[0]);
-            ValidateTeamFormat(args[1]);
-            ValidateScore(args[2]);
-            ValidateScore(args[3]);
-        } catch (error) {
-            throw error;
-        }
+        ValidateTeamFormat(args[0]);
+        ValidateTeamFormat(args[1]);
+        ValidateScore(args[2]);
+        ValidateScore(args[3]);
         return args;
     } else if (args.length === 3) {
-        try {
-            ValidateTeamFormat(args[0]);
-            ValidateDateFormat(args[1]);
-            ValidateGroupNumber(args[2]);
-        } catch (error) {
-            throw error;
-        }
+        ValidateTeamFormat(args[0]);
+        ValidateDateFormat(args[1]);
+        ValidateGroupNumber(args[2]);
         return args;
     } else {
         throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_EDIT_MESSAGE + VALID_EDIT_SYNTAX_MESSAGE);

@@ -54,10 +54,9 @@ function UpdateResults(Results) {
 }
 
 function UpdateRanks(Table) {
-    return Table.map((item, index) => ({
-        Rank: index + 1,
-        ...item
-    }));
+    return Table.map((item, index) => {
+        return Object.assign({ Rank: index + 1 }, item);
+    });
 }
 
 function PrintTable() {
@@ -109,7 +108,7 @@ function UpdateTable(Teams, Results, NumOfGroups) {
     const BeforeData = {
         Teams: [],
         Results: []
-    }
+    };
     for (let i = 0; i < Teams.length; i++) {
         const CurrentTeam = TableManager.getTeam(Teams[i].teamName);
         if (CurrentTeam) {
@@ -175,7 +174,7 @@ function UpdateTable(Teams, Results, NumOfGroups) {
         }
     }
     UpdateResults(Results);
-    CurrentMaxNumOfGroups = TableManager.getNumOfGroups();
+    const CurrentMaxNumOfGroups = TableManager.getNumOfGroups();
     if (NumOfGroups > CurrentMaxNumOfGroups) {
         TableManager.assignNumOfGroups(NumOfGroups);
     }

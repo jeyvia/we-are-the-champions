@@ -10,7 +10,7 @@ const TYPES = {
     Delete: "Delete",
     Exit: "Exit",
     Help: "Help",
-}
+};
 
 const FullHelpMessageOutput =
     "Commands:\n" + 
@@ -30,7 +30,6 @@ const FullHelpMessageOutput =
     "/Delete\nEND\n\n" +
     "---- To exit the program: ----\n" +
     "/Exit\nEND\n";
-
 
 function Command(ParsedInput, inputBuffer, callback) {
     const CommandType = ParsedInput.Type;
@@ -60,7 +59,7 @@ function Command(ParsedInput, inputBuffer, callback) {
                 TeamName: ParsedInput.TeamName
             }, callback);
             break;
-        case TYPES.Edit:
+        case TYPES.Edit: {
             const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results, ParsedInput.NumOfGroups);
             SaveJsonWithHash();
             Logger({
@@ -69,6 +68,7 @@ function Command(ParsedInput, inputBuffer, callback) {
                 BeforeData: BeforeData
             }, callback);
             break;
+        }
         case TYPES.Delete:
             DeleteTable();
             SaveJsonWithHash();
@@ -94,7 +94,7 @@ function Command(ParsedInput, inputBuffer, callback) {
             }, callback);
             break;
         default:
-            console.log('Invalid Command Entered');
+            console.error('Error: Invalid Command Entered');
             Logger({
                 Type: CommandType,
                 InputBuffer: inputBuffer

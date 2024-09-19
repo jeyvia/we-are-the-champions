@@ -9,7 +9,7 @@ const TYPES = {
     Exit: "Exit",
     Help: "Help",
     Invalid: "Invalid",
-}
+};
 
 const COMMANDS = {
     TeamInformation: "team information:",
@@ -19,7 +19,7 @@ const COMMANDS = {
     Delete: "/delete",
     Exit: "/exit",
     Help: "/help"
-}
+};
 
 function ParseInput(input) {
     const lines = input.split('\n');
@@ -46,7 +46,7 @@ function ParseInput(input) {
                             maxGroupNumber = parseInt(args[2]);
                         }
                     } catch (error) {
-                        
+                        console.error('Error:', error.message); // Optional if you want to log the error
                     }
                 }
             }
@@ -62,7 +62,7 @@ function ParseInput(input) {
                     team2Score: parseInt(args[3])
                 });
             } catch (error) {
-                
+                console.error('Error:', error.message); // Optional if you want to log the error
             }
         }
         return {
@@ -114,7 +114,7 @@ function ParseInput(input) {
                         }
                     }
                 } catch (error) {
-                    
+                    console.error('Error:', error.message); // Optional if you want to log the error
                 }
             }
             return {
