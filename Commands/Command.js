@@ -39,7 +39,7 @@ function Command(ParsedInput, inputBuffer, user, callback) {
     const CommandType = ParsedInput.Type;
     switch (CommandType) {
         case TYPES.FormTable:
-            FormTable(ParsedInput.Teams, ParsedInput.NumOfGroups);
+            FormTable(ParsedInput.Teams);
             UpdateResults(ParsedInput.Results);
             PrintTable();
             SaveJsonWithHash(user.username);
@@ -67,7 +67,7 @@ function Command(ParsedInput, inputBuffer, user, callback) {
             }, callback);
             break;
         case TYPES.Edit: {
-            const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results, ParsedInput.NumOfGroups);
+            const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results);
             SaveJsonWithHash(user.username);
             Logger({
                 Type: CommandType,

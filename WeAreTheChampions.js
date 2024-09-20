@@ -77,7 +77,7 @@ async function main() {
                 inputBuffer = '';
             });
         } else {
-            inputBuffer += line + '\n';
+            inputBuffer += line.trim() + '\n';
         }
     });
 }

@@ -1,6 +1,7 @@
 const TableManager = require('./Table');
 
-function FormTable(Teams, NumOfGroups) {
+function FormTable(Teams) {
+    const maxGroupNumber = TableManager.getNumOfGroups();
     for (let i = 0; i < Teams.length; i++) {
         if (TableManager.getTeam(Teams[i].teamName)) {
             console.log(`Team with name ${Teams[i].teamName} already exists`);
@@ -17,12 +18,15 @@ function FormTable(Teams, NumOfGroups) {
                 GroupNumber: Teams[i].groupNumber,
                 MatchHistory: []
             });
+            if (Teams[i].groupNumber > maxGroupNumber) {
+                TableManager.assignNumOfGroups(Teams[i].groupNumber);
+            }
         }
     }
-    TableManager.assignNumOfGroups(NumOfGroups);
 }
 
 function UpdateResults(Results) {
+    let updated = false;
     for (let i = 0; i < Results.length; i++) {
         const Team1 = Results[i].team1;
         const Team2 = Results[i].team2;
@@ -30,27 +34,34 @@ function UpdateResults(Results) {
         const Team2Data = TableManager.getTeam(Team2);
         const Team1Score = Results[i].team1Score;
         const Team2Score = Results[i].team2Score;
-        if (Team1Score > Team2Score) {
-            Team1Data.Wins++;
-            Team1Data.Points += 3;
-            Team2Data.Losses++;
-        } else if (Team1Score < Team2Score) {
-            Team1Data.Losses++;
-            Team2Data.Wins++;
-            Team2Data.Points += 3;
+        if (!Team1Data || !Team2Data) {
+            console.log(`One or both teams in match ${Team1} vs ${Team2} do not exist`);
+            continue;
         } else {
-            Team1Data.Draws++;
-            Team1Data.Points++;
-            Team2Data.Draws++;
-            Team2Data.Points++;
+            if (Team1Score > Team2Score) {
+                Team1Data.Wins++;
+                Team1Data.Points += 3;
+                Team2Data.Losses++;
+            } else if (Team1Score < Team2Score) {
+                Team1Data.Losses++;
+                Team2Data.Wins++;
+                Team2Data.Points += 3;
+            } else {
+                Team1Data.Draws++;
+                Team1Data.Points++;
+                Team2Data.Draws++;
+                Team2Data.Points++;
+            }
+            Team1Data.GoalsScored += Team1Score;
+            Team2Data.GoalsScored += Team2Score;
+            Team1Data.MatchesPlayed++;
+            Team2Data.MatchesPlayed++;
+            Team1Data.MatchHistory.push({ Opponent: Team2, TeamScore: Team1Score, OpponentScore: Team2Score });
+            Team2Data.MatchHistory.push({ Opponent: Team1, TeamScore: Team2Score, OpponentScore: Team1Score });
+            updated = true;
         }
-        Team1Data.GoalsScored += Team1Score;
-        Team2Data.GoalsScored += Team2Score;
-        Team1Data.MatchesPlayed++;
-        Team2Data.MatchesPlayed++;
-        Team1Data.MatchHistory.push({ Opponent: Team2, TeamScore: Team1Score, OpponentScore: Team2Score });
-        Team2Data.MatchHistory.push({ Opponent: Team1, TeamScore: Team2Score, OpponentScore: Team1Score });
     }
+    return updated;
 }
 
 function UpdateRanks(Table) {
@@ -66,24 +77,26 @@ function PrintTable() {
         return;
     }
     for (let i = 1; i <= maxGroupNumber; i++) {
-        console.log(`Group ${i}`);
         const CurrentTable = TableManager.getTable(i);
-        const TableWithRanks = UpdateRanks(CurrentTable);
+        if (Array.isArray(CurrentTable) && CurrentTable.length > 0) {
+            console.log(`Group ${i}`);
+            const TableWithRanks = UpdateRanks(CurrentTable);
 
-        const excludedKeys = ['RegistrationDate', 'GroupNumber', "MatchHistory"];
-        const columns = Object.keys(TableWithRanks[0]).filter(key => !excludedKeys.includes(key));
+            const excludedKeys = ['RegistrationDate', 'GroupNumber', "MatchHistory"];
+            const columns = Object.keys(TableWithRanks[0]).filter(key => !excludedKeys.includes(key));
 
-        const columnWidths = columns.map(column =>
-            Math.max(...TableWithRanks.map(row => row[column].toString().length), column.length)
-        );
-        console.log(columns.map((col, i) => col.padEnd(columnWidths[i])).join(' | '));
-        console.log(columnWidths.map(width => '-'.repeat(width)).join('-|-'));
+            const columnWidths = columns.map(column =>
+                Math.max(...TableWithRanks.map(row => row[column].toString().length), column.length)
+            );
+            console.log(columns.map((col, i) => col.padEnd(columnWidths[i])).join(' | '));
+            console.log(columnWidths.map(width => '-'.repeat(width)).join('-|-'));
 
-        TableWithRanks.forEach(row => {
-            console.log(columns.map((col, i) => row[col].toString().padEnd(columnWidths[i])).join(' | '));
-        });
-        const qualifiedTeams = TableWithRanks.slice(0, 4).map(team => team.TeamName);
-        console.log('Teams that have qualified for the next round:', qualifiedTeams.join(", "));
+            TableWithRanks.forEach(row => {
+                console.log(columns.map((col, i) => row[col].toString().padEnd(columnWidths[i])).join(' | '));
+            });
+            const qualifiedTeams = TableWithRanks.slice(0, 4).map(team => team.TeamName);
+            console.log('Teams that have qualified for the next round:', qualifiedTeams.join(", "));
+        }
     }
 }
 
@@ -104,11 +117,12 @@ function PrintTeam(TeamName) {
     }
 }
 
-function UpdateTable(Teams, Results, NumOfGroups) {
+function UpdateTable(Teams, Results) {
     const BeforeData = {
         Teams: [],
         Results: []
     };
+    const CurrentMaxNumOfGroups = TableManager.getNumOfGroups();
     for (let i = 0; i < Teams.length; i++) {
         const CurrentTeam = TableManager.getTeam(Teams[i].teamName);
         if (CurrentTeam) {
@@ -134,11 +148,15 @@ function UpdateTable(Teams, Results, NumOfGroups) {
                 GroupNumber: Teams[i].groupNumber,
                 MatchHistory: []
             });
+            if (Teams[i].groupNumber > CurrentMaxNumOfGroups) {
+                TableManager.assignNumOfGroups(Teams[i].groupNumber);
+            }
         }
     }
     for (let i = 0; i < Results.length; i++) {
         const CurrentTeam = TableManager.getTeam(Results[i].team1);
-        if (CurrentTeam) {
+        const OpponentTeam = TableManager.getTeam(Results[i].team2);
+        if (CurrentTeam && OpponentTeam) {
             const matchIndex = TableManager.getMatch(CurrentTeam, Results[i].team2);
             const OpponentTeam = TableManager.getTeam(Results[i].team2);
             const CurrentTeamBefore = JSON.parse(JSON.stringify(CurrentTeam));
@@ -171,14 +189,13 @@ function UpdateTable(Teams, Results, NumOfGroups) {
                 OpponentTeam.GoalsScored -= CurrentTeam.MatchHistory[matchIndex].OpponentScore;
                 CurrentTeam.MatchHistory.splice(matchIndex, 1);
             }
-        }
+        } 
     }
-    UpdateResults(Results);
-    const CurrentMaxNumOfGroups = TableManager.getNumOfGroups();
-    if (NumOfGroups > CurrentMaxNumOfGroups) {
-        TableManager.assignNumOfGroups(NumOfGroups);
+    if (UpdateResults(Results)) {
+        console.log('Table has been updated with new data');
+    } else {
+        console.log('No updates have been made to the table');
     }
-    console.log('Table has been updated with new data');
     return BeforeData;
 }
 

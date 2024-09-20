@@ -38,7 +38,7 @@ class TableManager {
                     const aAlternatePoints = a.Wins * 5 + a.Draws * 3 + a.Losses;
                     const bAlternatePoints = b.Wins * 5 + b.Draws * 3 + b.Losses;
                     if (aAlternatePoints === bAlternatePoints) {
-                        return this.ParseDateString(a.registrationDate) - this.ParseDateString(b.registrationDate);
+                        return this.ParseDateString(a.RegistrationDate) - this.ParseDateString(b.RegistrationDate);
                     } else {
                         return bAlternatePoints - aAlternatePoints;
                     }

@@ -25,7 +25,6 @@ function ParseInput(input) {
     const lines = input.split('\n');
     const teams = [];
     const results = [];
-    let maxGroupNumber = 0;
     let index = 1;
     let matchResultsFound = false;
     if (lines[0].toLowerCase() === (COMMANDS.TeamInformation)) {
@@ -42,9 +41,6 @@ function ParseInput(input) {
                             registrationDate: args[1],
                             groupNumber: parseInt(args[2])
                         });
-                        if (parseInt(args[2]) > maxGroupNumber) {
-                            maxGroupNumber = parseInt(args[2]);
-                        }
                     } catch (error) {
                         console.error('Error:', error.message); // Optional if you want to log the error
                     }
@@ -68,8 +64,7 @@ function ParseInput(input) {
         return {
             Type: TYPES.FormTable,
             Teams: teams,
-            Results: results,
-            NumOfGroups: maxGroupNumber
+            Results: results
         };
     } else if (lines[0].toLowerCase().includes('/')) {
         const command = lines[0].split(' ')[0];
@@ -109,9 +104,6 @@ function ParseInput(input) {
                             registrationDate: args[1],
                             groupNumber: parseInt(args[2])
                         });
-                        if (parseInt(args[2]) > maxGroupNumber) {
-                            maxGroupNumber = parseInt(args[2]);
-                        }
                     }
                 } catch (error) {
                     console.error('Error:', error.message); // Optional if you want to log the error
@@ -120,8 +112,7 @@ function ParseInput(input) {
             return {
                 Type: TYPES.Edit,
                 Teams: teams,
-                Results: results,
-                NumOfGroups: maxGroupNumber
+                Results: results
             };
         } else if (command.toLowerCase() === COMMANDS.Delete) {
             try {

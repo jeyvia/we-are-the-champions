@@ -31,7 +31,7 @@ function logsToFile(message, user, callback) {
     const timestamp = getDateTime();
     const logMessage = '-'.repeat(150) + '\n' + `${timestamp} - ${message}\n`;
     const LOGS_FILEPATH = `./Logger/logs-${user}.txt`;
-    
+
     fs.appendFile(LOGS_FILEPATH, logMessage, (err) => {
         if (err) {
             console.error('Error writing to log file:', err);
@@ -49,25 +49,28 @@ function PrintTableForLogs() {
     }
     let returnMessage = '';
     for (let i = 1; i <= maxGroupNumber; i++) {
-        returnMessage += `Group ${i}\n`;
         const CurrentTable = TableManager.getTable(i);
-        const TableWithRanks = UpdateRanks(CurrentTable);
+        if (Array.isArray(CurrentTable) && CurrentTable.length > 0) {
+            returnMessage += `Group ${i}\n`;
 
-        const excludedKeys = ['RegistrationDate', 'GroupNumber', "MatchHistory"];
-        const columns = Object.keys(TableWithRanks[0]).filter(key => !excludedKeys.includes(key));
+            const TableWithRanks = UpdateRanks(CurrentTable);
 
-        const columnWidths = columns.map(column =>
-            Math.max(...TableWithRanks.map(row => row[column].toString().length), column.length)
-        );
-        returnMessage += columns.map((col, i) => col.padEnd(columnWidths[i])).join(' | ');
-        returnMessage += '\n';
-        returnMessage += columnWidths.map(width => '-'.repeat(width)).join('-|-');
-        returnMessage += '\n';
+            const excludedKeys = ['RegistrationDate', 'GroupNumber', "MatchHistory"];
+            const columns = Object.keys(TableWithRanks[0]).filter(key => !excludedKeys.includes(key));
 
-        TableWithRanks.forEach(row => {
-            returnMessage += columns.map((col, i) => row[col].toString().padEnd(columnWidths[i])).join(' | ');
+            const columnWidths = columns.map(column =>
+                Math.max(...TableWithRanks.map(row => row[column].toString().length), column.length)
+            );
+            returnMessage += columns.map((col, i) => col.padEnd(columnWidths[i])).join(' | ');
             returnMessage += '\n';
-        });
+            returnMessage += columnWidths.map(width => '-'.repeat(width)).join('-|-');
+            returnMessage += '\n';
+
+            TableWithRanks.forEach(row => {
+                returnMessage += columns.map((col, i) => row[col].toString().padEnd(columnWidths[i])).join(' | ');
+                returnMessage += '\n';
+            });
+        }
     }
     return returnMessage;
 }
