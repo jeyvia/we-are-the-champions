@@ -150,10 +150,10 @@ function UpdateTable(Teams, Results) {
                 GroupNumber: Teams[i].groupNumber,
                 MatchHistory: []
             });
-            if (Teams[i].groupNumber > CurrentMaxNumOfGroups) {
-                TableManager.assignNumOfGroups(Teams[i].groupNumber);
-            }
             teamsUpdated = true;
+        }
+        if (Teams[i].groupNumber > CurrentMaxNumOfGroups) {
+            TableManager.assignNumOfGroups(Teams[i].groupNumber);
         }
     }
     for (let i = 0; i < Results.length; i++) {

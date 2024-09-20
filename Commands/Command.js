@@ -18,17 +18,17 @@ const TYPES = {
 const FullHelpMessageOutput =
     "Commands:\n" +
     "---- To add team(s) to the table: ----\n" +
-    "Team Information:\nTeamX MM/DD GroupNumber\nEND\n\n" +
+    "Team Information:\nTeamName Date GroupNumber\nEND\n\n" +
     "---- To add match results: ----\n" +
-    "Match Results:\nTeamX TeamY TeamXScore TeamYScore\nEND\n\n" +
+    "Match Results:\nTeam1 Team2 Team1Score Team2Score\nEND\n\n" +
     "---- To print the full table by groups: ----\n" +
     "/Print\nEND\n\n" +
     "---- To print a specific team's information: ----\n" +
-    "/Print TeamX\nEND\n\n" +
+    "/Print TeamName\nEND\n\n" +
     "---- To edit a specific team's information: ----\n" +
-    "/Edit\nTeamX MM/DD GroupNumber\nEND\n\n" +
+    "/Edit\nTeamName Date GroupNumber\nEND\n\n" +
     "---- To edit a specific match result: ----\n" +
-    "/Edit\nTeamX TeamY TeamXScore TeamYScore\nEND\n\n" +
+    "/Edit\nTeam1 Team2 Team1Score Team2Score\nEND\n\n" +
     "---- To clear all previously entered data: ----\n" +
     "/Delete\nEND\n\n" +
     "---- To exit the program: ----\n" +
