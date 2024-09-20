@@ -1,7 +1,6 @@
 const { FormTable, UpdateResults, PrintTable, PrintTeam, UpdateTable, DeleteTable } = require('./TableOperations');
 const Logger = require('../Logger/Logger');
-const { SaveJsonWithHash } = require('../Data/LocalStorage');
-const { AuthenticateRole } = require('../Authentication/RoleAuthentication');
+const { LoadAndVerifyJson, SaveJsonWithHash, DeleteUserData } = require('../Data/LocalStorage');
 
 const TYPES = {
     FormTable: "FormTable",
@@ -11,7 +10,7 @@ const TYPES = {
     Delete: "Delete",
     Exit: "Exit",
     Help: "Help",
-    InsufficientPermissionsType: "InsufficientPermissions",
+    Invalid: "Invalid",
     AdminEdit: "AdminEdit",
     AdminDelete: "AdminDelete"
 };
@@ -104,38 +103,50 @@ function Command(ParsedInput, inputBuffer, user, callback) {
                 User: user.username
             }, callback);
             break;
-        case TYPES.AdminEdit:
-            if (AuthenticateRole(user.role)) {
+        case TYPES.AdminEdit: {
+            try {
+                LoadAndVerifyJson(ParsedInput.User);
+                const BeforeData = UpdateTable(ParsedInput.Teams, ParsedInput.Results);
+                SaveJsonWithHash(ParsedInput.User);
                 Logger({
                     Type: CommandType,
                     InputBuffer: inputBuffer,
-                    User: user.username
+                    BeforeData: BeforeData,
+                    User: user.username,
+                    TargetUser: ParsedInput.User
                 }, callback);
-            } else {
-                console.error(`Error: Insufficient Permissions for ${user.role} Role to run ${CommandType} Command`);
+                console.log(`Reloading data for ${user.username}`);
+                LoadAndVerifyJson(user.username);
+                break;
+            } catch (error) {
+                console.error('Error:', error.message);
                 Logger({
-                    Type: TYPES.InsufficientPermissionsType,
+                    Type: TYPES.Invalid,
                     InputBuffer: inputBuffer,
                     User: user.username
                 }, callback);
+                break;
             }
-            break;
+        }
         case TYPES.AdminDelete:
-            if (AuthenticateRole(user.role)) {
+            try {
+                DeleteUserData(ParsedInput.User);
                 Logger({
                     Type: CommandType,
                     InputBuffer: inputBuffer,
-                    User: user.username
+                    User: user.username,
+                    TargetUser: ParsedInput.User
                 }, callback);
-            } else {
-                console.error(`Error: Insufficient Permissions for ${user.role} Role to run ${CommandType} Command`);
+                break;
+            } catch (error) {
+                console.error('Error:', error.message);
                 Logger({
-                    Type: TYPES.InsufficientPermissionsType,
+                    Type: TYPES.Invalid,
                     InputBuffer: inputBuffer,
                     User: user.username
                 }, callback);
+                break;
             }
-            break;
         default:
             console.error('Error: Invalid Command Entered');
             Logger({

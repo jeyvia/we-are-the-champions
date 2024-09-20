@@ -4,6 +4,7 @@ const TableManager = require('../Commands/Table');
 
 const NO_FILE_MESSAGE = 'No data file found.';
 const EMPTY_FILE_MESSAGE = 'The data file is empty.';
+const NO_DATA_BUT_LOADED_MESSAGE = 'No data found in the file, but empty data will continue to be loaded.';
 const INVALID_JSON_FORMAT_MESSAGE = 'Invalid JSON format.';
 const MISSING_FIELDS_MESSAGE = "Missing 'data' or 'hash' fields in the JSON file.";
 const DATA_INTEGRITY_CHECK_FAILED_MESSAGE = 'Data integrity check failed: Data has been tampered with.';
@@ -32,15 +33,19 @@ function LoadAndVerifyJson(user) {
             } catch (error) {
                 throw new Error(INVALID_JSON_FORMAT_MESSAGE);
             }
-            if (!ParsedContent.data || !Array.isArray(ParsedContent.data.rawTable) || ParsedContent.data.numOfGroups === 0 || !ParsedContent.hash) {
+            if (!ParsedContent.data || !ParsedContent.hash) {
                 throw new Error(MISSING_FIELDS_MESSAGE);
+            }
+
+            if (!Array.isArray(ParsedContent.data.rawTable) || ParsedContent.data.numOfGroups === 0) {
+                console.log(NO_DATA_BUT_LOADED_MESSAGE);
             }
 
             const CalculatedHash = CalculateHash(ParsedContent.data);
             if (CalculatedHash !== ParsedContent.hash) {
                 throw new Error(DATA_INTEGRITY_CHECK_FAILED_MESSAGE);
             }
-            
+
             TableManager.setRawTable(ParsedContent.data.rawTable);
             TableManager.assignNumOfGroups(ParsedContent.data.numOfGroups);
             console.log(LOAD_DATA_SUCCESS_MESSAGE);
@@ -52,4 +57,17 @@ function LoadAndVerifyJson(user) {
     }
 }
 
-module.exports = { SaveJsonWithHash, LoadAndVerifyJson };
+function DeleteUserData(user) {
+    const FILENAME = `./Data/data-${user}.json`;
+    if (fs.existsSync(FILENAME)) {
+        const data = { rawTable: [], numOfGroups: 0 };
+        const hash = CalculateHash(data);
+        const dataWithHash = { data, hash };
+        fs.writeFileSync(FILENAME, JSON.stringify(dataWithHash, null, 2));
+        console.log(`Data for ${user} has been deleted.`);
+    } else {
+        throw new Error(`${user} does not have any existing data files.`);
+    }
+}
+
+module.exports = { SaveJsonWithHash, LoadAndVerifyJson, DeleteUserData };

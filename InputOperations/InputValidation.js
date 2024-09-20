@@ -1,3 +1,5 @@
+const { AuthenticateRole, CheckIfUserExists } = require('../Authentication/UserAuthentication');
+
 const NULL_INPUT_MESSAGE = "Input is null, undefined or empty";
 const INCORRECT_NUMBER_OF_ARGUMENTS_TEAM_INFORMATION_MESSAGE = "Incorrect number of arguments to input Team Information. Expected number of arguments: 3\n";
 const INCORRECT_NUMBER_OF_ARGUMENTS_MATCH_RESULTS_MESSAGE = "Incorrect number of arguments to input Match Results. Expected number of arguments: 4\n";
@@ -10,6 +12,9 @@ const INCORRECT_NUMBER_OF_ARGUMENTS_EDIT_MESSAGE = "Incorrect number of argument
 const INVALID_DELETE_COMMAND_MESSAGE = "Incorrect number of arguments to input Delete. Expected number of arguments: 1\n";
 const INVALID_EXIT_COMMAND_MESSAGE = "Incorrect number of arguments to input Exit. Expected number of arguments: 1\n";
 const INVALID_HELP_COMMAND_MESSAGE = "Incorrect number of arguments to input Help. Expected number of arguments: 1\n";
+const INCORRECT_NUMBER_OF_ARGUMENTS_ADMIN_EDIT_MESSAGE = "Incorrect number of arguments to input AdminEdit. Expected number of arguments: 2\n";
+const INCORRECT_NUMBER_OF_ARGUMENTS_ADMIN_DELETE_MESSAGE = "Incorrect number of arguments to input AdminDelete. Expected number of arguments: 2\n";
+const INVALID_PERMISSIONS_MESSAGE = "You do not have the necessary permissions to perform this action";
 
 const VALID_TEAM_INFORMATION_SYNTAX_MESSAGE = "Team Information syntax:\nTeam Information:\nTeamX MM/DD GroupNumber";
 const VALID_MATCH_RESULTS_SYNTAX_MESSAGE = "Match Results syntax:\nMatch Results:\nTeamX TeamY TeamXScore TeamYScore";
@@ -18,6 +23,8 @@ const VALID_EDIT_SYNTAX_MESSAGE = "Edit syntax:\n/Edit\nTeamX DD/MM GroupNumber\
 const VALID_DELETE_SYNTAX_MESSAGE = "Delete syntax:\n/Delete";
 const VALID_EXIT_SYNTAX_MESSAGE = "Exit syntax:\n/Exit";
 const VALID_HELP_SYNTAX_MESSAGE = "Help syntax:\n/Help";
+const VALID_ADMIN_EDIT_SYNTAX_MESSAGE = "AdminEdit syntax:\n/AdminEdit Username";
+const VALID_ADMIN_DELETE_SYNTAX_MESSAGE = "AdminDelete syntax:\n/AdminDelete Username";
 
 function ValidateTeamFormat(input) {
     if (input.length !== 5) {
@@ -152,4 +159,48 @@ function ValidateHelpInput(input) {
     }
 }
 
-module.exports = { ValidateTeamInformationInput, ValidateMatchResultsInput, ValidatePrintInput, ValidateEditInput, ValidateDeleteInput, ValidateExitInput, ValidateHelpInput };
+function ValidateAdminEditCommand(input, user) {
+    if (input === null || input === undefined || input === '') {
+        throw new Error(NULL_INPUT_MESSAGE);
+    }
+    if (!AuthenticateRole(user)) {
+        throw new Error(INVALID_PERMISSIONS_MESSAGE);
+    }
+    const args = input.split(' ');
+    if (args.length !== 2) {
+        throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_ADMIN_EDIT_MESSAGE + VALID_ADMIN_EDIT_SYNTAX_MESSAGE);
+    }
+    if (!CheckIfUserExists(args[1])) {
+        throw new Error(`User ${args[1]} does not exist`);
+    }
+    return args[1];
+}
+
+function ValidateAdminDeleteCommand(input, user) {
+    if (input === null || input === undefined || input === '') {
+        throw new Error(NULL_INPUT_MESSAGE);
+    }
+    if (!AuthenticateRole(user)) {
+        throw new Error(INVALID_PERMISSIONS_MESSAGE);
+    }
+    const args = input.split(' ');
+    if (args.length !== 2) {
+        throw new Error(INCORRECT_NUMBER_OF_ARGUMENTS_ADMIN_DELETE_MESSAGE + VALID_ADMIN_DELETE_SYNTAX_MESSAGE);
+    }
+    if (!CheckIfUserExists(args[1])) {
+        throw new Error(`User ${args[1]} does not exist`);
+    }
+    return args[1];
+}
+
+module.exports = { 
+    ValidateTeamInformationInput, 
+    ValidateMatchResultsInput, 
+    ValidatePrintInput, 
+    ValidateEditInput, 
+    ValidateDeleteInput, 
+    ValidateExitInput, 
+    ValidateHelpInput, 
+    ValidateAdminEditCommand, 
+    ValidateAdminDeleteCommand
+};

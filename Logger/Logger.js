@@ -11,6 +11,18 @@ const EXIT_MESSAGE = 'WeAreTheChampions has initiated exit based on User Input\n
 const HELP_MESSAGE = 'WeAreTheChampions has printed the help message\n';
 const INVALIDCOMMAND_MESSAGE = 'WeAreTheChampions did not recognise the command entered\nWeAreTheChampions classified User Input as invalid\n';
 
+const TYPES = {
+    FormTable: "FormTable",
+    PrintTeam: "PrintTeam",
+    PrintTable: "PrintTable",
+    Edit: "Edit",
+    Delete: "Delete",
+    Exit: "Exit",
+    Help: "Help",
+    AdminEdit: "AdminEdit",
+    AdminDelete: "AdminDelete"
+};
+
 function getDateTime() {
     const now = new Date();
     const gmt8Time = new Date(now.getTime());
@@ -136,7 +148,7 @@ function Logger(CommandsInfo, callback) {
     let message = `${CommandsInfo.User} entered the following input:\n`;
     const inputBuffer = CommandsInfo.InputBuffer;
     switch (CommandType) {
-        case 'FormTable':
+        case TYPES.FormTable:
             for (let i = 0; i < inputBuffer.length; i++) {
                 message += inputBuffer[i];
             }
@@ -144,13 +156,13 @@ function Logger(CommandsInfo, callback) {
             message += FORMTABLE_MESSAGE;
             message += PrintTableForLogs();
             break;
-        case 'PrintTable':
+        case TYPES.PrintTable:
             message += inputBuffer;
             message += '\n';
             message += PRINTTABLE_MESSAGE;
             message += PrintTableForLogs();
             break;
-        case 'PrintTeam': {
+        case TYPES.PrintTeam: {
             message += inputBuffer;
             message += '\n';
             message += PRINTTEAM_MESSAGE;
@@ -158,7 +170,7 @@ function Logger(CommandsInfo, callback) {
             message += PrintTeamforLogs(TeamData);
             break;
         }
-        case 'Edit':
+        case TYPES.Edit:
             for (let i = 0; i < inputBuffer.length; i++) {
                 message += inputBuffer[i];
             }
@@ -166,20 +178,33 @@ function Logger(CommandsInfo, callback) {
             message += EDITTABLE_MESSAGE;
             message += FormatLogsForEdit(CommandsInfo.BeforeData);
             break;
-        case 'Delete':
+        case TYPES.Delete:
             message += inputBuffer;
             message += '\n';
             message += DELETETABLE_MESSAGE;
             break;
-        case 'Exit':
+        case TYPES.Exit:
             message += inputBuffer;
             message += '\n';
             message += EXIT_MESSAGE;
             break;
-        case 'Help':
+        case TYPES.Help:
             message += inputBuffer;
             message += '\n';
             message += HELP_MESSAGE;
+            break;
+        case TYPES.AdminEdit:
+            for (let i = 0; i < inputBuffer.length; i++) {
+                message += inputBuffer[i];
+            }
+            message += '\n';
+            message += `WeAreTheChampions has edited the ${CommandsInfo.TargetUser}'s table with the following changes:\n`;
+            message += FormatLogsForEdit(CommandsInfo.BeforeData);
+            break;
+        case TYPES.AdminDelete:
+            message += inputBuffer;
+            message += '\n';
+            message += `WeAreTheChampions has deleted ${CommandsInfo.TargetUser}'s table\n`;
             break;
         default:
             message += inputBuffer;

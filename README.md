@@ -86,6 +86,8 @@ For testing, the following usernames and passwords have been provided:
 * **Username**: user
 * **Password**: user
 
+The usernames and passwords above are **case-sensitive**.
+
 ## Features
 
 ### Listing all available commands: `Help`
@@ -251,7 +253,46 @@ END
 ```
 
 ## Admin-restricted Commands
-To be added.
+### Editing Team Information or Match Results of a specific user: `/AdminEdit` 
+Edits Team Information and Match Results of existing teams of the **specified user**. If the inputted match results does not exist between the two teams, a new match result will be added to the table.
+
+Syntax: 
+```
+/AdminEdit Username
+TeamName Date GroupNumber
+Team1Name Team2Name Team1Score Team2Score
+END
+```
+
+> ⚠️️️️ Syntax Notes
+> * `Username` is a text string. It must be a valid username for the command to run.
+> * `TeamName`, `Team1Name` and `Team2Name` are text strings. They must follow the format 'TeamX' where X is a letter from A-Z. They should be exactly 5 characters long.
+> * `Date` is a text string in the format `"DD/MM"`. It should be exactly 5 characters long.
+> * `GroupNumber` is an integer. The value should be greater than 0.
+> * `Team1Score` and `Team2Score` are integers. The values should be at least 0.
+
+Examples of usage: 
+```
+/AdminEdit user
+TeamA 02/03 3
+TeamA TeamB 2 0
+END
+```
+
+<hr>
+
+### Deleting all Team Information and Match Results of a specific user: `/AdminDelete`
+Deletes all team information and match results from the table of the **specified user**.
+
+Syntax: `/AdminDelete Username`
+
+> ⚠️️️️ Syntax Notes
+> * `Username` is a text string. It must be a valid username for the command to run.
+
+Example of usage:
+* `/AdminDelete user`
+
+<hr>
 
 ## Sample Outputs
 Input: 

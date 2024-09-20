@@ -23,4 +23,16 @@ function AuthenticateUser(username, password) {
     }
 }
 
-module.exports = { AuthenticateUser };
+function CheckIfUserExists(username) {
+    const users = readUsers();
+    return users[username] !== undefined;
+}
+
+function AuthenticateRole(user) {
+    if (user.role === 'admin') {
+        return true;
+    }
+    return false;
+}
+
+module.exports = { AuthenticateUser, AuthenticateRole, CheckIfUserExists };

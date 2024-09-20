@@ -122,6 +122,7 @@ function UpdateTable(Teams, Results) {
         Teams: [],
         Results: []
     };
+    let teamsUpdated = false;
     const CurrentMaxNumOfGroups = TableManager.getNumOfGroups();
     for (let i = 0; i < Teams.length; i++) {
         const CurrentTeam = TableManager.getTeam(Teams[i].teamName);
@@ -135,6 +136,7 @@ function UpdateTable(Teams, Results) {
             );
             CurrentTeam.RegistrationDate = Teams[i].registrationDate;
             CurrentTeam.GroupNumber = Teams[i].groupNumber;
+            teamsUpdated = true;
         } else {
             TableManager.addTeam({
                 TeamName: Teams[i].teamName,
@@ -151,6 +153,7 @@ function UpdateTable(Teams, Results) {
             if (Teams[i].groupNumber > CurrentMaxNumOfGroups) {
                 TableManager.assignNumOfGroups(Teams[i].groupNumber);
             }
+            teamsUpdated = true;
         }
     }
     for (let i = 0; i < Results.length; i++) {
@@ -191,7 +194,7 @@ function UpdateTable(Teams, Results) {
             }
         } 
     }
-    if (UpdateResults(Results)) {
+    if (UpdateResults(Results) || teamsUpdated) {
         console.log('Table has been updated with new data');
     } else {
         console.log('No updates have been made to the table');

@@ -70,7 +70,7 @@ async function main() {
     rl.on('line', (line) => {
         if (line.trim().toLowerCase() === END_COMMAND.toLowerCase()) {
             console.log('');
-            const fullInput = ParseInput(inputBuffer);
+            const fullInput = ParseInput(inputBuffer, user);
             Command(fullInput, inputBuffer, user, () => {
                 console.log('-'.repeat(150));
                 console.log('Ready for more input...');

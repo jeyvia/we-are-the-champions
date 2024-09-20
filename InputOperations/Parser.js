@@ -1,4 +1,14 @@
-const { ValidateTeamInformationInput, ValidateMatchResultsInput, ValidatePrintInput, ValidateEditInput, ValidateDeleteInput, ValidateExitInput, ValidateHelpInput } = require('./InputValidation');
+const {
+    ValidateTeamInformationInput,
+    ValidateMatchResultsInput,
+    ValidatePrintInput,
+    ValidateEditInput,
+    ValidateDeleteInput,
+    ValidateExitInput,
+    ValidateHelpInput,
+    ValidateAdminEditCommand,
+    ValidateAdminDeleteCommand
+} = require('./InputValidation');
 
 const TYPES = {
     FormTable: "FormTable",
@@ -9,6 +19,8 @@ const TYPES = {
     Exit: "Exit",
     Help: "Help",
     Invalid: "Invalid",
+    AdminEdit: "AdminEdit",
+    AdminDelete: "AdminDelete"
 };
 
 const COMMANDS = {
@@ -18,10 +30,12 @@ const COMMANDS = {
     Edit: "/edit",
     Delete: "/delete",
     Exit: "/exit",
-    Help: "/help"
+    Help: "/help",
+    AdminEdit: "/adminedit",
+    AdminDelete: "/admindelete"
 };
 
-function ParseInput(input) {
+function ParseInput(input, user) {
     const lines = input.split('\n');
     const teams = [];
     const results = [];
@@ -143,6 +157,55 @@ function ParseInput(input) {
                 ValidateHelpInput(lines[0]);
                 return {
                     Type: TYPES.Help
+                };
+            } catch (error) {
+                console.error("Error:", error.message);
+                return {
+                    Type: TYPES.Invalid
+                };
+            }
+        } else if (command.toLowerCase() === COMMANDS.AdminEdit) {
+            try {
+                const TargetUsername = ValidateAdminEditCommand(lines[0], user);
+                for (let i = 1; i < lines.length - 1; i++) {
+                    try {
+                        const args = ValidateEditInput(lines[i]);
+                        if (args.length === 4) {
+                            results.push({
+                                team1: args[0],
+                                team2: args[1],
+                                team1Score: parseInt(args[2]),
+                                team2Score: parseInt(args[3])
+                            });
+                        } else if (args.length === 3) {
+                            teams.push({
+                                teamName: args[0],
+                                registrationDate: args[1],
+                                groupNumber: parseInt(args[2])
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error:', error.message); // Optional if you want to log the error
+                    }
+                }
+                return {
+                    Type: TYPES.AdminEdit,
+                    User: TargetUsername,
+                    Teams: teams,
+                    Results: results
+                };
+            } catch (error) {
+                console.error("Error:", error.message);
+                return {
+                    Type: TYPES.Invalid
+                };
+            }
+        } else if (command.toLowerCase() === COMMANDS.AdminDelete) {
+            try {
+                const TargetUsername = ValidateAdminDeleteCommand(lines[0], user);
+                return {
+                    Type: TYPES.AdminDelete,
+                    User: TargetUsername
                 };
             } catch (error) {
                 console.error("Error:", error.message);
